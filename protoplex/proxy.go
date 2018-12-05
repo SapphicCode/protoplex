@@ -6,15 +6,15 @@ import (
 
 func proxy(from net.Conn, to net.Conn) {
 	defer from.Close()
-	var err error
+
+	data := make([]byte, 4096) // 4KiB buffer
 
 	for {
-		data := make([]byte, 1)
-		_, err = from.Read(data)
+		n, err := from.Read(data)
 		if err != nil {
 			return
 		}
-		_, err = to.Write(data)
+		_, err = to.Write(data[:n])
 		if err != nil {
 			return
 		}
