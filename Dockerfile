@@ -1,5 +1,5 @@
 # build
-FROM golang:latest
+FROM golang:latest AS build
 
 COPY protoplex/ /tmp/protoplex/protoplex
 COPY protoplex.go /tmp/protoplex/
