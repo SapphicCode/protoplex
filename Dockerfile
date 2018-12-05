@@ -1,13 +1,14 @@
 # build
-FROM golang:latest AS build
+FROM alpine:edge AS build
 
+RUN apk update && apk install musl-dev go
 COPY protoplex/ /tmp/protoplex/protoplex
 COPY protoplex.go /tmp/protoplex/
-RUN go build -o /tmp/protoplex/protoplex /tmp/protoplex/protoplex.go
+RUN go build /tmp/protoplex/protoplex.go
 
 # deploy
 FROM alpine:latest
-COPY --from=build /tmp/protoplex/protoplex /protoplex
+COPY --from=build /protoplex /protoplex
 
 USER 999
 ENTRYPOINT ["/protoplex"]
