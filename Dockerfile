@@ -1,7 +1,7 @@
 # build
 FROM alpine:edge AS build
 
-RUN apk update && apk install musl-dev go
+RUN apk update && apk add musl-dev go
 COPY protoplex/ /tmp/protoplex/protoplex
 COPY protoplex.go /tmp/protoplex/
 RUN go build /tmp/protoplex/protoplex.go
