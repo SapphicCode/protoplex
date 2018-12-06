@@ -25,7 +25,7 @@ and then run it with (for example, to run SSH and HTTPS)
 ./protoplex -ssh your_ssh_host:22 -tls your_webserver:443
 ```
 
-Protoplex will is now running on port `8443` and ready to accept connections.
+Protoplex is now running on port `8443` and ready to accept connections.
 
 For more extensive configuration, please see the output of `-help`.
 
@@ -61,7 +61,7 @@ Currently supported protocols are:
 - OpenVPN
 
 Feel free to [file an issue](https://github.com/Pandentia/protoplex/issues/new)
-on the GitHub repository. Please include steps to accurately reproduce your
-client setup.
+on the GitHub repository if you want a protocol to be supported. Please include
+steps to accurately reproduce your client setup.
 
 Alternatively, you may submit a pull request.
