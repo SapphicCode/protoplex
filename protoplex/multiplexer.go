@@ -70,7 +70,7 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	}
 
 	// run the proxy readers
-	closed := make(chan bool)
+	closed := make(chan bool, 2)
 	go proxy(conn, targetConn, closed)
 	go proxy(targetConn, conn, closed)
 
