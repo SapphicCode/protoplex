@@ -6,6 +6,5 @@ func NewSSHProtocol(targetAddress string) *Protocol {
 		Target:                  targetAddress,
 		MatchBytes:              [][]byte{{'S', 'S', 'H', '-'}},
 		NoComparisonBeforeBytes: 4,
-		NoComparisonAfterBytes:  4,
 	}
 }

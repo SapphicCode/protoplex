@@ -6,6 +6,5 @@ func NewTLSProtocol(targetAddress string) *Protocol {
 		Target:                  targetAddress,
 		MatchBytes:              [][]byte{{'\x16', '\x03', '\x01'}},
 		NoComparisonBeforeBytes: 3,
-		NoComparisonAfterBytes:  3,
 	}
 }
