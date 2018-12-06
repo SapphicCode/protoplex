@@ -59,13 +59,13 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	targetConn, err := net.Dial("tcp", protocol.Target)
 	if err != nil {
 		conn.Close()
-		fmt.Printf("%s: %s rejected our connection.\n", connectionId, protocol.Target)
+		fmt.Printf("%s: %s rejected our connection. Connection closed.\n", connectionId, protocol.Target)
 		return // we were unable to establish the connection with the proxy target
 	}
 	_, err = targetConn.Write(identifyBuffer[:n]) // tell them everything they just told us
 	if err != nil {
 		conn.Close()
-		fmt.Printf("%s: %s cut off our identification payload.\n", connectionId, protocol.Target)
+		fmt.Printf("%s: %s cut off our identification payload. Connection closed.\n", connectionId, protocol.Target)
 		return // remote rejected us?? okay.
 	}
 
@@ -75,7 +75,7 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	go proxy(targetConn, conn, closed)
 
 	// wait for any connection to close
-	<- closed
+	<-closed
 	conn.Close()
 	targetConn.Close()
 	fmt.Printf("%s: Connection closed.\n", connectionId)
