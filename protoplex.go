@@ -14,11 +14,18 @@ func main() {
 	http := flag.String("http", "", "The HTTP server address")
 	flag.Parse()
 
-	p := []*protocols.Protocol{
-		protocols.NewSSHProtocol(*ssh),
-		protocols.NewTLSProtocol(*tls),
-		protocols.NewOpenVPNProtocol(*openvpn),
-		protocols.NewHTTPProtocol(*http),
+	p := make([]*protocols.Protocol, 0, 4)
+	if *ssh != "" {
+		p = append(p, protocols.NewSSHProtocol(*ssh))
+	}
+	if *tls != "" {
+		p = append(p, protocols.NewTLSProtocol(*tls))
+	}
+	if *openvpn != "" {
+		p = append(p, protocols.NewOpenVPNProtocol(*openvpn))
+	}
+	if *http != "" {
+		p = append(p, protocols.NewHTTPProtocol(*http))
 	}
 
 	protoplex.RunServer(*bind, p)
