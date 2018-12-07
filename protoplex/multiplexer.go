@@ -11,9 +11,7 @@ import (
 func RunServer(bind string, p []*protocols.Protocol) {
 	fmt.Println("Protocol chain:")
 	for _, proto := range p {
-		if proto.Target != "" {
-			fmt.Printf("- %s @ %s\n", proto.Name, proto.Target)
-		}
+		fmt.Printf("- %s @ %s\n", proto.Name, proto.Target)
 	}
 
 	listener, err := net.Listen("tcp", bind)
@@ -37,7 +35,6 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	connectionId := conn.RemoteAddr().String()
 
 	identifyBuffer := make([]byte, 1024) // at max 1KB buffer to identify payload
-	var protocol *protocols.Protocol
 
 	// read the handshake into our buffer
 	_ = conn.SetReadDeadline(time.Now().Add(15 * time.Second)) // 15-second timeout to identify
@@ -49,7 +46,7 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	_ = conn.SetReadDeadline(time.Time{}) // reset our timeout
 
 	// determine the protocol
-	protocol = determineProtocol(identifyBuffer[:n], p)
+	protocol := determineProtocol(identifyBuffer[:n], p)
 	if protocol == nil { // unsuccessful protocol identify, close and forget
 		fmt.Printf("%s: Protocol unrecognized. Connection closed.\n", connectionId)
 		return
