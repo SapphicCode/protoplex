@@ -33,25 +33,24 @@ func RunServer(bind string, p []*protocols.Protocol) {
 }
 
 func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
+	defer conn.Close() // the connection must close after this goroutine exits
 	connectionId := conn.RemoteAddr().String()
 
 	identifyBuffer := make([]byte, 1024) // at max 1KB buffer to identify payload
 	var protocol *protocols.Protocol
 
 	// read the handshake into our buffer
-	conn.SetReadDeadline(time.Now().Add(15 * time.Second)) // 15-second timeout to identify
+	_ = conn.SetReadDeadline(time.Now().Add(15 * time.Second)) // 15-second timeout to identify
 	n, err := conn.Read(identifyBuffer)
 	if err != nil {
-		conn.Close()
 		fmt.Printf("%s: Identify read error (%s). Connection closed.\n", connectionId, err)
 		return
 	}
-	conn.SetReadDeadline(time.Time{}) // reset our timeout
+	_ = conn.SetReadDeadline(time.Time{}) // reset our timeout
 
 	// determine the protocol
 	protocol = determineProtocol(identifyBuffer[:n], p)
 	if protocol == nil { // unsuccessful protocol identify, close and forget
-		conn.Close()
 		fmt.Printf("%s: Protocol unrecognized. Connection closed.\n", connectionId)
 		return
 	}
@@ -60,13 +59,12 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	// establish our connection with the target
 	targetConn, err := net.Dial("tcp", protocol.Target)
 	if err != nil {
-		conn.Close()
 		fmt.Printf("%s: %s error (%s). Connection closed.\n", connectionId, protocol.Target, err)
 		return // we were unable to establish the connection with the proxy target
 	}
+	defer targetConn.Close()
 	_, err = targetConn.Write(identifyBuffer[:n]) // tell them everything they just told us
 	if err != nil {
-		conn.Close()
 		fmt.Printf("%s: %s error (%s). Connection closed.\n", connectionId, protocol.Target, err)
 		return // remote rejected us?? okay.
 	}
@@ -78,8 +76,6 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 
 	// wait for any connection to close
 	<-closed
-	conn.Close()
-	targetConn.Close()
 	fmt.Printf("%s: Connection closed.\n", connectionId)
 }
 
