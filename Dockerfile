@@ -2,9 +2,10 @@
 FROM alpine:edge AS build
 
 RUN apk update && apk add musl-dev go
+RUN apk add git
 COPY protoplex/ /tmp/protoplex/protoplex
 COPY protoplex.go /tmp/protoplex/
-RUN go build /tmp/protoplex/protoplex.go
+RUN cd /tmp/protoplex && go get -d ./... && go build -o /protoplex /tmp/protoplex/protoplex.go
 
 # deploy
 FROM alpine:latest
