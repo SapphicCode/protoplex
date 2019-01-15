@@ -4,10 +4,15 @@ import (
 	"./protoplex"
 	"./protoplex/protocols"
 	"flag"
+	"github.com/juju/loggo"
 )
 
 func main() {
+	logger := loggo.GetLogger("protoplex")
+
 	bind := flag.String("bind", "0.0.0.0:8443", "The address to bind to")
+	verbose := flag.Bool("verbose", false, "Whether to be verbose")
+
 	ssh := flag.String("ssh", "", "The SSH server address")
 	tls := flag.String("tls", "", "The TLS/HTTPS server address")
 	openvpn := flag.String("ovpn", "", "The OpenVPN server address")
@@ -17,6 +22,12 @@ func main() {
 	stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
 
 	flag.Parse()
+
+	if *verbose {
+		logger.SetLogLevel(loggo.DEBUG)
+	} else {
+		logger.SetLogLevel(loggo.INFO)
+	}
 
 	p := make([]*protocols.Protocol, 0, 7)
 	// contain-bytes-matched protocols (usually ALPNs) take priority

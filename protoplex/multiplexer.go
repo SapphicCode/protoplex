@@ -3,29 +3,33 @@ package protoplex
 import (
 	"./protocols"
 	"bytes"
-	"fmt"
+	"github.com/juju/loggo"
 	"net"
+	"os"
 	"time"
 )
 
 func RunServer(bind string, p []*protocols.Protocol) {
-	fmt.Println("Protocol chain:")
+	logger := loggo.GetLogger("protoplex.listener")
+
+	logger.Infof("Protocol chain:\n")
 	for _, proto := range p {
-		fmt.Printf("- %s @ %s\n", proto.Name, proto.Target)
+		logger.Infof("- %s @ %s\n", proto.Name, proto.Target)
 	}
 
 	listener, err := net.Listen("tcp", bind)
 	if err != nil {
-		panic(err)
+		logger.Criticalf("Unable to create listener: %s\n", err)
+		os.Exit(1)
 	}
 	defer listener.Close()
-	fmt.Printf("Listening at %s...\n", listener.Addr())
+	logger.Infof("Listening at %s...\n", listener.Addr())
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			fmt.Printf("Error while accepting connection: %s\n", err)
+			logger.Debugf("Error while accepting connection: %s\n", err)
 		}
-		fmt.Printf("%s: Connection accepted.\n", conn.RemoteAddr())
+		logger.Debugf("%s: Connection accepted.\n", conn.RemoteAddr())
 		go connectionHandler(conn, p)
 	}
 }
@@ -33,6 +37,7 @@ func RunServer(bind string, p []*protocols.Protocol) {
 func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	defer conn.Close() // the connection must close after this goroutine exits
 	connectionId := conn.RemoteAddr().String()
+	logger := loggo.GetLogger("protoplex.connection")
 
 	identifyBuffer := make([]byte, 1024) // at max 1KB buffer to identify payload
 
@@ -40,7 +45,7 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	_ = conn.SetReadDeadline(time.Now().Add(15 * time.Second)) // 15-second timeout to identify
 	n, err := conn.Read(identifyBuffer)
 	if err != nil {
-		fmt.Printf("%s: Identify read error (%s). Connection closed.\n", connectionId, err)
+		logger.Debugf("%s: Identify read error (%s). Connection closed.\n", connectionId, err)
 		return
 	}
 	_ = conn.SetReadDeadline(time.Time{}) // reset our timeout
@@ -48,21 +53,21 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	// determine the protocol
 	protocol := determineProtocol(identifyBuffer[:n], p)
 	if protocol == nil { // unsuccessful protocol identify, close and forget
-		fmt.Printf("%s: Protocol unrecognized. Connection closed.\n", connectionId)
+		logger.Debugf("%s: Protocol unrecognized. Connection closed.\n", connectionId)
 		return
 	}
-	fmt.Printf("%s: Recognized protocol %s.\n", connectionId, protocol.Name)
+	logger.Debugf("%s: Recognized protocol %s.\n", connectionId, protocol.Name)
 
 	// establish our connection with the target
 	targetConn, err := net.Dial("tcp", protocol.Target)
 	if err != nil {
-		fmt.Printf("%s: %s error (%s). Connection closed.\n", connectionId, protocol.Target, err)
+		logger.Debugf("%s: %s error (%s). Connection closed.\n", connectionId, protocol.Target, err)
 		return // we were unable to establish the connection with the proxy target
 	}
 	defer targetConn.Close()
 	_, err = targetConn.Write(identifyBuffer[:n]) // tell them everything they just told us
 	if err != nil {
-		fmt.Printf("%s: %s error (%s). Connection closed.\n", connectionId, protocol.Target, err)
+		logger.Debugf("%s: %s error (%s). Connection closed.\n", connectionId, protocol.Target, err)
 		return // remote rejected us?? okay.
 	}
 
@@ -73,7 +78,7 @@ func connectionHandler(conn net.Conn, p []*protocols.Protocol) {
 
 	// wait for any connection to close
 	<-closed
-	fmt.Printf("%s: Connection closed.\n", connectionId)
+	logger.Debugf("%s: Connection closed.\n", connectionId)
 }
 
 func determineProtocol(data []byte, p []*protocols.Protocol) *protocols.Protocol {
