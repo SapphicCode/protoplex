@@ -2,9 +2,8 @@ package protocols
 
 func NewSSHProtocol(targetAddress string) *Protocol {
 	return &Protocol{
-		Name:                    "SSH",
-		Target:                  targetAddress,
-		MatchBytes:              [][]byte{{'S', 'S', 'H', '-'}},
-		NoComparisonBeforeBytes: 4,
+		Name:            "SSH",
+		Target:          targetAddress,
+		MatchStartBytes: [][]byte{{'S', 'S', 'H', '-'}},
 	}
 }

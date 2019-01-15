@@ -86,7 +86,18 @@ func determineProtocol(data []byte, p []*protocols.Protocol) *protocols.Protocol
 		}
 
 		// compare against bytestrings first for efficiency
+		// first "contains" (due to ALPNs we can't match against TLS start bytes first)
 		for _, byteSlice := range protocol.MatchBytes {
+			byteSliceLength := len(byteSlice)
+			if dataLength < byteSliceLength {
+				continue
+			}
+			if bytes.Contains(data, byteSlice) {
+				return protocol
+			}
+		}
+		// then against prefixes
+		for _, byteSlice := range protocol.MatchStartBytes {
 			byteSliceLength := len(byteSlice)
 			if dataLength < byteSliceLength {
 				continue
