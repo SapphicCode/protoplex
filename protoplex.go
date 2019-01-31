@@ -33,6 +33,7 @@ func main() {
 	// contain-bytes-matched protocols (usually ALPNs) take priority
 	// (due to start-bytes-matching overriding some of them)
 	if *stRelay != "" {
+		logger.Warningf("Syncthing Relay support is currently untested and unreliable.\n")
 		p = append(p, protocols.NewSTRelayProtocol(*stRelay))
 	}
 	// start-bytes-matched protocols are the next most efficient approach

@@ -12,9 +12,13 @@ import (
 func RunServer(bind string, p []*protocols.Protocol) {
 	logger := loggo.GetLogger("protoplex.listener")
 
-	logger.Infof("Protocol chain:\n")
-	for _, proto := range p {
-		logger.Infof("- %s @ %s\n", proto.Name, proto.Target)
+	if len(p) == 0 {
+		logger.Warningf("No protocols defined.\n")
+	} else {
+		logger.Infof("Protocol chain:\n")
+		for _, proto := range p {
+			logger.Infof("- %s @ %s\n", proto.Name, proto.Target)
+		}
 	}
 
 	listener, err := net.Listen("tcp", bind)
