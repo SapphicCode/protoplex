@@ -37,11 +37,11 @@ func main() {
 		p = append(p, protocols.NewSTRelayProtocol(*stRelay))
 	}
 	// start-bytes-matched protocols are the next most efficient approach
-	if *ssh != "" {
-		p = append(p, protocols.NewSSHProtocol(*ssh))
-	}
 	if *tls != "" {
 		p = append(p, protocols.NewTLSProtocol(*tls))
+	}
+	if *ssh != "" {
+		p = append(p, protocols.NewSSHProtocol(*ssh))
 	}
 	if *openvpn != "" {
 		p = append(p, protocols.NewOpenVPNProtocol(*openvpn))
