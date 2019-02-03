@@ -1,8 +1,8 @@
 package protoplex
 
 import (
-	"./protocols"
 	"bytes"
+	"github.com/Pandentia/protoplex/protoplex/protocols"
 	"github.com/juju/loggo"
 	"net"
 	"os"

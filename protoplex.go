@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./protoplex"
-	"./protoplex/protocols"
 	"flag"
+	"github.com/Pandentia/protoplex/protoplex"
+	"github.com/Pandentia/protoplex/protoplex/protocols"
 	"github.com/juju/loggo"
 )
 

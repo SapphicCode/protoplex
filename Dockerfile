@@ -1,15 +1,14 @@
 # build
-FROM alpine:edge AS build
+FROM golang:1-alpine AS build
 
-RUN apk update && apk add musl-dev go
 RUN apk add git
-COPY protoplex/ /tmp/protoplex/protoplex
-COPY protoplex.go /tmp/protoplex/
-RUN cd /tmp/protoplex && go get -d ./... && go build -o /protoplex /tmp/protoplex/protoplex.go
+RUN mkdir -p /go/src/github.com/Pandentia
+COPY ./ /go/src/github.com/Pandentia/protoplex
+RUN go get github.com/Pandentia/protoplex
 
 # deploy
 FROM alpine:latest
-COPY --from=build /protoplex /protoplex
+COPY --from=build /go/bin/protoplex /protoplex
 
 USER 999
 ENTRYPOINT ["/protoplex"]
