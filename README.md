@@ -60,7 +60,7 @@ Currently supported protocols are:
 - TLS (/ HTTPS)
 - OpenVPN
 - SOCKS4 / SOCKS5
-- Syncthing Relay
+- Syncthing Relay (untested, hypothetical)
 
 Feel free to [file an issue](https://github.com/Pandentia/protoplex/issues/new)
 on the GitHub repository if you want a protocol to be supported. Please include
