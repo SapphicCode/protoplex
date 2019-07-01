@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	"github.com/Pandentia/protoplex/protoplex"
 	"github.com/Pandentia/protoplex/protoplex/protocols"
 	"github.com/juju/loggo"
@@ -43,9 +44,6 @@ func main() {
 	if *ssh != "" {
 		p = append(p, protocols.NewSSHProtocol(*ssh))
 	}
-	if *openvpn != "" {
-		p = append(p, protocols.NewOpenVPNProtocol(*openvpn))
-	}
 	if *socks5 != "" {
 		p = append(p, protocols.NewSOCKS5Protocol(*socks5))
 	}
@@ -53,6 +51,9 @@ func main() {
 		p = append(p, protocols.NewSOCKS4Protocol(*socks4))
 	}
 	// regex protocols come at the end of the chain as they'll be expensive anyway if used
+	if *openvpn != "" {
+		p = append(p, protocols.NewOpenVPNProtocol(*openvpn))
+	}
 	if *http != "" {
 		p = append(p, protocols.NewHTTPProtocol(*http))
 	}
