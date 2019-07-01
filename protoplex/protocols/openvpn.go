@@ -2,6 +2,7 @@ package protocols
 
 import "regexp"
 
+// NewOpenVPNProtocol initializes a Protocol with an OpenVPN signature.
 func NewOpenVPNProtocol(targetAddress string) *Protocol {
 	return &Protocol{
 		Name:   "OpenVPN",

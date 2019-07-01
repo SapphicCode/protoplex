@@ -1,5 +1,6 @@
 package protocols
 
+// NewTLSProtocol initializes a Protocol with a TLS signature.
 func NewTLSProtocol(targetAddress string) *Protocol {
 	return &Protocol{
 		Name:            "TLS",

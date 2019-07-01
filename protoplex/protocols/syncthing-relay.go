@@ -1,5 +1,7 @@
 package protocols
 
+// NewSTRelayProtocol initializes a Protocol with a Syncthing Relay signature.
+// This signature is deprecated.
 func NewSTRelayProtocol(targetAddress string) *Protocol {
 	return &Protocol{
 		Name:   "STRelay",

@@ -2,6 +2,7 @@ package protocols
 
 import "regexp"
 
+// Protocol is the implementation of a protocol signature.
 type Protocol struct {
 	Name                    string           // the protocol name for auditing
 	Target                  string           // the proxy target
