@@ -1,3 +1,5 @@
+String buildCommand = 'go build -o builds/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex'
+
 pipeline {
     agent {
         label 'go'
@@ -11,12 +13,16 @@ pipeline {
             }
         }
         stage('Build') {
-            environment {
-                GOOS = 'linux'
-                GOARCH = 'amd64'
-            }
-            steps {
-                sh 'go build -o builds/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex'
+            parallel {
+                stage('linux/amd64') {
+                    environment {
+                        GOOS = env.STAGE_NAME.split('/')[0]
+                        GOARCH = env.STAGE_NAME.split('/')[1]
+                    }
+                    steps {
+                        sh buildCommand
+                    }
+                }
             }
         }
         stage('Cleanup') {
