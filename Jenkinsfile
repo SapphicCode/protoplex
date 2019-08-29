@@ -15,9 +15,11 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('linux/amd64') {
+                    String go_os = env.STAGE_NAME.split('/')[0]
+                    String go_arch = env.STAGE_NAME.split('/')[1]
                     environment {
-                        GOOS = env.STAGE_NAME.split('/')[0]
-                        GOARCH = env.STAGE_NAME.split('/')[1]
+                        GOOS = go_os
+                        GOARCH = go_arch
                     }
                     steps {
                         sh buildCommand
