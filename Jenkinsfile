@@ -116,6 +116,26 @@ pipeline {
                         sh buildCommand
                     }
                 }
+                stage('darwin/368') {
+                    steps {
+                        sh buildCommand
+                    }
+                }
+                stage('darwin/amd64') {
+                    steps {
+                        sh buildCommand
+                    }
+                }
+                stage('darwin/arm') {
+                    steps {
+                        sh buildCommand
+                    }
+                }
+                stage('darwin/arm64') {
+                    steps {
+                        sh buildCommand
+                    }
+                }
             }
         }
         stage('Cleanup') {
