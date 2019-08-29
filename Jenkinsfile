@@ -20,101 +20,99 @@ pipeline {
             }
         }
         stage('Build') {
-            parallel {
-                stage('linux/386') {
-                    steps {
-                        sh buildCommand
-                    }
+            stage('linux/386') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/amd64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/amd64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/arm') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/arm') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/arm64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/arm64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/mips') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/mips') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/mips64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/mips64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/mips64le') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/mips64le') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/ppc64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/ppc64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/ppc64le') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/ppc64le') {
+                steps {
+                    sh buildCommand
                 }
-                stage('linux/s390x') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('linux/s390x') {
+                steps {
+                    sh buildCommand
                 }
-                stage('windows/386') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('windows/386') {
+                steps {
+                    sh buildCommand
                 }
-                stage('windows/amd64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('windows/amd64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('windows/arm') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('windows/arm') {
+                steps {
+                    sh buildCommand
                 }
-                stage('freebsd/386') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('freebsd/386') {
+                steps {
+                    sh buildCommand
                 }
-                stage('freebsd/amd64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('freebsd/amd64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('freebsd/arm') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('freebsd/arm') {
+                steps {
+                    sh buildCommand
                 }
-                stage('netbsd/386') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('netbsd/386') {
+                steps {
+                    sh buildCommand
                 }
-                stage('netbsd/amd64') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('netbsd/amd64') {
+                steps {
+                    sh buildCommand
                 }
-                stage('netbsd/arm') {
-                    steps {
-                        sh buildCommand
-                    }
+            }
+            stage('netbsd/arm') {
+                steps {
+                    sh buildCommand
                 }
             }
         }
