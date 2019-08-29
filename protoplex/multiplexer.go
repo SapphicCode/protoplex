@@ -6,45 +6,44 @@ import (
 	"os"
 	"time"
 
+	"github.com/rs/zerolog"
+
 	"github.com/Pandentia/protoplex/protoplex/protocols"
-	"github.com/juju/loggo"
 )
 
 // RunServer runs protoplex
-func RunServer(bind string, p []*protocols.Protocol) {
-	logger := loggo.GetLogger("protoplex.listener")
+func RunServer(bind string, p []*protocols.Protocol, logger zerolog.Logger) {
+	logger = logger.With().Str("module", "listener").Logger()
 
 	if len(p) == 0 {
-		logger.Warningf("No protocols defined.\n")
+		logger.Warn().Msg("No protocols defined.")
 	} else {
-		logger.Infof("Protocol chain:\n")
+		logger.Info().Msg("Protocol chain:")
 		for _, proto := range p {
-			logger.Infof("- %s @ %s\n", proto.Name, proto.Target)
+			logger.Info().Str("protocol", proto.Name).Str("target", proto.Target).Msgf("- %s @ %s", proto.Name, proto.Target)
 		}
 	}
 
 	listener, err := net.Listen("tcp", bind)
 	if err != nil {
-		logger.Criticalf("Unable to create listener: %s\n", err)
+		logger.Fatal().Str("bind", bind).Err(err).Msg("Unable to create listener.")
 		os.Exit(1)
 	}
 	defer listener.Close()
-	logger.Infof("Listening at %s...\n", listener.Addr())
+	logger.Info().Str("bind", listener.Addr().String()).Msg("Listening...")
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			logger.Debugf("Error while accepting connection: %s\n", err)
+			logger.Debug().Err(err).Msg("Error while accepting connection.")
 		}
-		logger.Debugf("%s: Connection accepted.\n", conn.RemoteAddr())
-		go ConnectionHandler(conn, p)
+		go ConnectionHandler(conn, p,
+			logger.With().Str("module", "handler").Str("ip", conn.RemoteAddr().String()).Logger())
 	}
 }
 
 // ConnectionHandler connects a net.Conn with a proxy target given a list of protocols
-func ConnectionHandler(conn net.Conn, p []*protocols.Protocol) {
+func ConnectionHandler(conn net.Conn, p []*protocols.Protocol, logger zerolog.Logger) {
 	defer conn.Close() // the connection must close after this goroutine exits
-	connectionID := conn.RemoteAddr().String()
-	logger := loggo.GetLogger("protoplex.connection")
 
 	identifyBuffer := make([]byte, 1024) // at max 1KB buffer to identify payload
 
@@ -52,7 +51,7 @@ func ConnectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	_ = conn.SetReadDeadline(time.Now().Add(15 * time.Second)) // 15-second timeout to identify
 	n, err := conn.Read(identifyBuffer)
 	if err != nil {
-		logger.Debugf("%s: Identify read error (%s). Connection closed.\n", connectionID, err)
+		logger.Debug().Err(err).Msg("Identify read error. Connection closed.")
 		return
 	}
 	_ = conn.SetReadDeadline(time.Time{}) // reset our timeout
@@ -60,21 +59,22 @@ func ConnectionHandler(conn net.Conn, p []*protocols.Protocol) {
 	// determine the protocol
 	protocol := DetermineProtocol(identifyBuffer[:n], p)
 	if protocol == nil { // unsuccessful protocol identify, close and forget
-		logger.Debugf("%s: Protocol unrecognized. Connection closed.\n", connectionID)
+		logger.Debug().Msg("Protocol unrecognized. Connection closed.")
 		return
 	}
-	logger.Debugf("%s: Recognized protocol %s.\n", connectionID, protocol.Name)
+	logger = logger.With().Str("protocol", protocol.Name).Str("target", protocol.Target).Logger()
+	logger.Debug().Msg("Protocol recognized.")
 
 	// establish our connection with the target
 	targetConn, err := net.Dial("tcp", protocol.Target)
 	if err != nil {
-		logger.Debugf("%s: %s error (%s). Connection closed.\n", connectionID, protocol.Target, err)
+		logger.Debug().Err(err).Msg("Remote connection unsuccessful.")
 		return // we were unable to establish the connection with the proxy target
 	}
 	defer targetConn.Close()
 	_, err = targetConn.Write(identifyBuffer[:n]) // tell them everything they just told us
 	if err != nil {
-		logger.Debugf("%s: %s error (%s). Connection closed.\n", connectionID, protocol.Target, err)
+		logger.Debug().Err(err).Msg("Remote disconnected us during identify.")
 		return // remote rejected us?? okay.
 	}
 
@@ -85,7 +85,7 @@ func ConnectionHandler(conn net.Conn, p []*protocols.Protocol) {
 
 	// wait for any connection to close
 	<-closed
-	logger.Debugf("%s: Connection closed.\n", connectionID)
+	logger.Debug().Msg("Connection closed.")
 }
 
 // DetermineProtocol determines a Protocol based on a given handshake
