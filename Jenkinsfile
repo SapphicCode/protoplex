@@ -7,6 +7,7 @@ pipeline {
             steps{
                 checkout scm
                 sh 'go get -u -v .'
+                sh 'mkdir -p builds'
             }
         }
         stage('Build') {
@@ -15,12 +16,12 @@ pipeline {
                 GOARCH = 'amd64'
             }
             steps {
-                sh 'go build -o /tmp/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex'
+                sh 'go build -o builds/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex'
             }
         }
         stage('Cleanup') {
             steps {
-                archiveArtifacts '/tmp/protoplex_*'
+                archiveArtifacts 'builds/*'
             }
         }
     }
