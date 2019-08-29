@@ -4,14 +4,20 @@ pipeline {
     }
     stages {
         stage('Prepare') {
-            checkout scm
-            sh 'go get -u -v .'
+            steps{
+                checkout scm
+                sh 'go get -u -v .'
+            }
         }
         stage('Build') {
-            sh 'go build protoplex.go'
+            steps {
+                sh 'go build protoplex.go'
+            }
         }
         stage('Cleanup') {
-            archiveArtifacts 'protoplex'
+            steps {
+                archiveArtifacts 'protoplex'
+            }
         }
     }
 }
