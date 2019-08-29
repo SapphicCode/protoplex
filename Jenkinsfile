@@ -20,7 +20,7 @@ pipeline {
             }
         }
         stage('Build') {
-            steps {
+            stages {
                 stage('linux/386') {
                     steps {
                         sh buildCommand
