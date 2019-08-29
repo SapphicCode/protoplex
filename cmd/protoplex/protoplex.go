@@ -2,17 +2,19 @@ package main
 
 import (
 	"flag"
+	"os"
 
 	"github.com/Pandentia/protoplex/protoplex"
 	"github.com/Pandentia/protoplex/protoplex/protocols"
-	"github.com/juju/loggo"
+	"github.com/rs/zerolog"
 )
 
 func main() {
-	logger := loggo.GetLogger("protoplex")
+	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 
 	bind := flag.String("bind", "0.0.0.0:8443", "The address to bind to")
 	verbose := flag.Bool("verbose", false, "Whether to be verbose")
+	pretty := flag.Bool("pretty", false, "Whether to enable pretty printing")
 
 	ssh := flag.String("ssh", "", "The SSH server address")
 	tls := flag.String("tls", "", "The TLS/HTTPS server address")
@@ -24,10 +26,14 @@ func main() {
 
 	flag.Parse()
 
+	if *pretty {
+		logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	}
+
 	if *verbose {
-		logger.SetLogLevel(loggo.DEBUG)
+		logger = logger.Level(zerolog.DebugLevel)
 	} else {
-		logger.SetLogLevel(loggo.INFO)
+		logger = logger.Level(zerolog.InfoLevel)
 	}
 
 	p := make([]*protocols.Protocol, 0, 7)
@@ -58,5 +64,5 @@ func main() {
 		p = append(p, protocols.NewHTTPProtocol(*http))
 	}
 
-	protoplex.RunServer(*bind, p)
+	protoplex.RunServer(*bind, p, logger)
 }
