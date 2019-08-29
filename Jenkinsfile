@@ -15,6 +15,9 @@ pipeline {
             }
         }
         stage('Build') {
+            environment {
+                CGO_ENABLED = '0'
+            }
             steps {
                 sh 'gox -parallel=2 -ldflags="-s -w" -output="builds/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/protoplex'
             }
