@@ -1,4 +1,7 @@
 pipeline {
+    options {
+        buildDiscarder logRotator(artifactNumToKeepStr: '10')
+    }
     agent {
         label 'go'
     }
