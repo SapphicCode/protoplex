@@ -10,13 +10,17 @@ pipeline {
             }
         }
         stage('Build') {
+            environment {
+                GOOS = 'linux'
+                GOARCH = 'amd64'
+            }
             steps {
-                sh 'go build protoplex.go'
+                sh 'go build -o /tmp/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex'
             }
         }
         stage('Cleanup') {
             steps {
-                archiveArtifacts 'protoplex'
+                archiveArtifacts '/tmp/protoplex_*'
             }
         }
     }
