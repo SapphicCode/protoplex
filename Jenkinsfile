@@ -1,4 +1,8 @@
-String buildCommand = 'go build -o builds/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex'
+String buildCommand = '''
+export GOOS=$(echo ${STAGE_NAME} | cut -d '/' -f 1)
+export GOARCH=$(echo ${STAGE_NAME} | cut -d '/' -f 2)
+go build -o builds/protoplex_${GOOS}_${GOARCH} ./cmd/protoplex
+'''
 
 pipeline {
     agent {
@@ -14,13 +18,22 @@ pipeline {
         }
         stage('Build') {
             parallel {
-                stage('linux/amd64') {
-                    String go_os = env.STAGE_NAME.split('/')[0]
-                    String go_arch = env.STAGE_NAME.split('/')[1]
-                    environment {
-                        GOOS = go_os
-                        GOARCH = go_arch
+                stage('linux/386') {
+                    steps {
+                        sh buildCommand
                     }
+                }
+                stage('linux/amd64') {
+                    steps {
+                        sh buildCommand
+                    }
+                }
+                stage('linux/arm') {
+                    steps {
+                        sh buildCommand
+                    }
+                }
+                stage('linux/arm64') {
                     steps {
                         sh buildCommand
                     }
