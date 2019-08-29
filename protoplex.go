@@ -20,7 +20,7 @@ func main() {
 	http := flag.String("http", "", "The HTTP server address")
 	socks5 := flag.String("socks5", "", "The SOCKS5 server address")
 	socks4 := flag.String("socks4", "", "The SOCKS4 server address")
-	stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
+	// stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
 
 	flag.Parse()
 
@@ -33,10 +33,10 @@ func main() {
 	p := make([]*protocols.Protocol, 0, 7)
 	// contain-bytes-matched protocols (usually ALPNs) take priority
 	// (due to start-bytes-matching overriding some of them)
-	if *stRelay != "" {
-		logger.Warningf("Syncthing Relay support is currently untested and unreliable.\n")
-		p = append(p, protocols.NewSTRelayProtocol(*stRelay))
-	}
+	// if *stRelay != "" {
+	// 	logger.Warningf("Syncthing Relay support is deprecated.\n")
+	// 	p = append(p, protocols.NewSTRelayProtocol(*stRelay))
+	// }
 	// start-bytes-matched protocols are the next most efficient approach
 	if *tls != "" {
 		p = append(p, protocols.NewTLSProtocol(*tls))
