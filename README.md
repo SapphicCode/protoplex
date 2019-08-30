@@ -2,6 +2,8 @@
 
 *An application protocol multiplexer*
 
+[![Build Status](https://jenkins-pandentia.qcx.io/job/Cassandra/job/protoplex/job/mistress/badge/icon)](https://jenkins-pandentia.qcx.io/job/Cassandra/job/protoplex/job/mistress/)
+
 ## What is this?
 
 In a nutshell, this application lets you run multiple kinds of applications
@@ -13,21 +15,21 @@ firewalls that block all other outbound ports.
 
 ### Native
 
-Compile the multiplexer with
+Assuming you have a properly configured Go setup, get and compile the multiplexer with
 
 ```bash
-go build protoplex.go
+go get github.com/Pandentia/protoplex/cmd/protoplex
 ```
 
 and then run it with (for example, to run SSH and HTTPS)
 
 ```bash
-./protoplex -ssh your_ssh_host:22 -tls your_webserver:443
+protoplex --ssh your_ssh_host:22 --tls your_webserver:443
 ```
 
 Protoplex is now running on port `8443` and ready to accept connections.
 
-For more extensive configuration, please see the output of `-help`.
+For more extensive configuration, please see the output of `--help`.
 
 ### Docker
 
@@ -60,7 +62,6 @@ Currently supported protocols are:
 - TLS (/ HTTPS)
 - OpenVPN
 - SOCKS4 / SOCKS5
-- Syncthing Relay (untested, hypothetical)
 
 Feel free to [file an issue](https://github.com/Pandentia/protoplex/issues/new)
 on the GitHub repository if you want a protocol to be supported. Please include
