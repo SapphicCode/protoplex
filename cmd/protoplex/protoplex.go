@@ -1,30 +1,31 @@
 package main
 
 import (
-	"flag"
 	"os"
 
 	"github.com/Pandentia/protoplex/protoplex"
 	"github.com/Pandentia/protoplex/protoplex/protocols"
 	"github.com/rs/zerolog"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 func main() {
+	app := kingpin.New("protoplex", "A fast and simple protocol multiplexer.")
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 
-	bind := flag.String("bind", "0.0.0.0:8443", "The address to bind to")
-	verbose := flag.Bool("verbose", false, "Whether to be verbose")
-	pretty := flag.Bool("pretty", false, "Whether to enable pretty printing")
+	bind := app.Flag("bind", "The address to bind to").Short('b').Default("0.0.0.0:8443").String()
+	verbose := app.Flag("verbose", "Enables debug logging").Short('v').Bool()
+	pretty := app.Flag("pretty", "Enables pretty logging").Short('p').Bool()
 
-	ssh := flag.String("ssh", "", "The SSH server address")
-	tls := flag.String("tls", "", "The TLS/HTTPS server address")
-	openvpn := flag.String("ovpn", "", "The OpenVPN server address")
-	http := flag.String("http", "", "The HTTP server address")
-	socks5 := flag.String("socks5", "", "The SOCKS5 server address")
-	socks4 := flag.String("socks4", "", "The SOCKS4 server address")
+	ssh := app.Flag("ssh", "The SSH server address").String()
+	tls := app.Flag("tls", "The TLS/HTTPS server address").String()
+	openvpn := app.Flag("ovpn", "The OpenVPN server address").String()
+	http := app.Flag("http", "The HTTP server address").String()
+	socks5 := app.Flag("socks5", "The SOCKS5 server address").String()
+	socks4 := app.Flag("socks4", "The SOCKS4 server address").String()
 	// stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
 
-	flag.Parse()
+	app.Parse(os.Args[1:])
 
 	if *pretty {
 		logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
