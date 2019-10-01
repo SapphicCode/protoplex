@@ -20,8 +20,13 @@ pipeline {
             }
             steps {
                 sh '''
-                    version="$(git describe --tags HEAD)+$(git rev-parse --short HEAD)"
-                    gox -parallel=2 -ldflags="-s -w -X main.version=${version}" -output="builds/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/protoplex
+                    version="$(git describe --tags HEAD)"
+                    if [ -z "${version}" ]; then
+                        version="v0.0.0"
+                    fi
+                    build="$(git rev-parse --short HEAD)"
+                    fullver="${version}+${build}"
+                    gox -parallel=2 -ldflags="-s -w -X main.version=${fullver}" -output="builds/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/protoplex
                 '''
             }
         }
