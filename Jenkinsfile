@@ -9,6 +9,7 @@ pipeline {
         stage('Prepare') {
             steps {
                 checkout scm
+                sh 'git fetch --depth=500'
                 sh 'go get github.com/mitchellh/gox'
                 sh 'go get -d -u -v ./cmd/protoplex'
                 sh 'mkdir -p builds'
