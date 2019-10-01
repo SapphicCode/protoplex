@@ -19,7 +19,10 @@ pipeline {
                 CGO_ENABLED = '0'
             }
             steps {
-                sh 'gox -parallel=2 -ldflags="-s -w" -output="builds/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/protoplex'
+                sh '''
+                    version="$(git describe --tags HEAD)+$(git rev-parse --short HEAD)"
+                    gox -parallel=2 -ldflags="-s -w -X main.version=${verson}" -output="builds/{{.Dir}}_{{.OS}}_{{.Arch}}" ./cmd/protoplex
+                '''
             }
         }
         stage('Cleanup') {

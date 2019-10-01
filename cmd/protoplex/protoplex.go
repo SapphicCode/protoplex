@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Pandentia/protoplex/protoplex"
@@ -9,9 +10,23 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+var version string
+
+func printVersion() {
+	if version == "" {
+		fmt.Println("Version has not been set.")
+		os.Exit(1)
+		return
+	}
+	fmt.Println(version)
+	os.Exit(0)
+}
+
 func main() {
 	app := kingpin.New("protoplex", "A fast and simple protocol multiplexer.")
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+
+	version := app.Flag("version", "Prints the current program version").Short('V').Bool()
 
 	bind := app.Flag("bind", "The address to bind to").Short('b').Default("0.0.0.0:8443").String()
 	verbose := app.Flag("verbose", "Enables debug logging").Short('v').Bool()
@@ -26,6 +41,10 @@ func main() {
 	// stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
 
 	app.Parse(os.Args[1:])
+
+	if *version {
+		printVersion()
+	}
 
 	if *pretty {
 		logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
