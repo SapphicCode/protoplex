@@ -20,7 +20,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    version="$(git describe --tags HEAD)"
+                    version="$(git describe --tags --abbrev=0 HEAD || true)"
                     if [ -z "${version}" ]; then
                         version="v0.0.0"
                     fi
