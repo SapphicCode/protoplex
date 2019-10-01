@@ -10,7 +10,7 @@ pipeline {
             steps {
                 checkout scm
                 sh 'go get github.com/mitchellh/gox'
-                sh 'go get -u -v .'
+                sh 'go get -d -u -v ./cmd/protoplex'
                 sh 'mkdir -p builds'
             }
         }
