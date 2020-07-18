@@ -21,7 +21,8 @@ steps:
     tr "\n" " " |
     sed -r "s~((android|nacl)/\w+|darwin/arm(64)?)~~g" |
     xargs)
-  - gox -parallel=16 -osarch="$arch" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-s -w" ./...
+  - version=$(if [ -z "$DRONE_TAG" ]; then echo $DRONE_COMMIT; else echo $DRONE_TAG; fi)
+  - gox -parallel=16 -osarch="$arch" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-X main.version=$version" ./...
   environment:
     CGO_ENABLED: 0
 
