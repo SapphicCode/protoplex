@@ -40,7 +40,7 @@ func main() {
 	socks4 := app.Flag("socks4", "The SOCKS4 server address").String()
 	// stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
 
-	app.Parse(os.Args[1:])
+	_, _ = app.Parse(os.Args[1:])
 
 	if *version {
 		printVersion()

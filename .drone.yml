@@ -1,0 +1,36 @@
+kind: pipeline
+type: docker
+name: build
+
+steps:
+- name: lint
+  image: golang:1.14-alpine
+  commands:
+  - go get golang.org/x/lint/golint github.com/securego/gosec/cmd/gosec
+  - test -z $(gofmt -l .)
+  - golint -set_exit_status ./...
+  - gosec -quiet ./...
+
+- name: prepare and build
+  image: golang:1.14-alpine
+  commands:
+  - go get github.com/mitchellh/gox
+  - go get -v -d ./...
+  - mkdir -p dist
+  - arch=$(go tool dist list |
+    tr "\n" " " |
+    sed -r "s~((android|nacl)/\w+|darwin/arm(64)?)~~g" |
+    xargs)
+  - version=$(if [ -z "$DRONE_TAG" ]; then echo $DRONE_COMMIT; else echo $DRONE_TAG; fi)
+  - gox -parallel=16 -osarch="$arch" -output="dist/{{.Dir}}_{{.OS}}_{{.Arch}}" -ldflags "-X main.version=$version" ./...
+  environment:
+    CGO_ENABLED: 0
+
+- name: release binaries
+  image: plugins/github-release
+  settings:
+    api_key:
+      from_secret: github_token
+    files: dist/*
+  when:
+    event: tag
