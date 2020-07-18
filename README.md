@@ -2,7 +2,7 @@
 
 *An application protocol multiplexer*
 
-[![Build Status](https://jenkins-pandentia.qcx.io/job/Cassandra/job/protoplex/job/mistress/badge/icon)](https://jenkins-pandentia.qcx.io/job/Cassandra/job/protoplex/job/mistress/)
+[![Build Status](https://cloud.drone.io/api/badges/Pandentia/protoplex/status.svg?ref=refs/heads/mistress)](https://cloud.drone.io/Pandentia/protoplex)
 
 ## What is this?
 
