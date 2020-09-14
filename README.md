@@ -3,6 +3,7 @@
 *An application protocol multiplexer*
 
 [![Build Status](https://cloud.drone.io/api/badges/Pandentia/protoplex/status.svg?ref=refs/heads/mistress)](https://cloud.drone.io/Pandentia/protoplex)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FPandentia%2Fprotoplex.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FPandentia%2Fprotoplex?ref=badge_shield)
 
 ## What is this?
 
@@ -68,3 +69,7 @@ on the GitHub repository if you want a protocol to be supported. Please include
 steps to accurately reproduce your client setup.
 
 Alternatively, you may submit a pull request.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FPandentia%2Fprotoplex.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FPandentia%2Fprotoplex?ref=badge_large)
