@@ -39,6 +39,7 @@ func main() {
 	socks5 := app.Flag("socks5", "The SOCKS5 server address").String()
 	socks4 := app.Flag("socks4", "The SOCKS4 server address").String()
 	// stRelay := flag.String("strelay", "", "The Syncthing Relay server address")
+	fallback := app.Flag("fallback", "The fallback address. If no protocol match, this address will be used.").String()
 
 	_, _ = app.Parse(os.Args[1:])
 
@@ -82,6 +83,9 @@ func main() {
 	}
 	if *http != "" {
 		p = append(p, protocols.NewHTTPProtocol(*http))
+	}
+	if *fallback != "" {
+		p = append(p, protocols.FallbackProtocol(*fallback))
 	}
 
 	protoplex.RunServer(*bind, p, logger)
